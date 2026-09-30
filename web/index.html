@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#f7f6f0">
+  <meta name="description" content="A private voice studio: an AI assistant that files your thoughts, dictation with automatic grammar polish, and reminders that actually remind you.">
+  <title>Echo Studio · Voice, in good hands.</title>
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/js/theme.js"></script>
+  <script type="module" src="/js/main.js"></script>
+</head>
+<body>
+  <svg class="icon-defs" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="icon-waveform" viewBox="0 0 24 24"><path d="M2 10v4m4-8v12m4-16v20m4-13v6m4-10v14m4-12v10"/></symbol>
+    <symbol id="icon-mic" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="13" rx="3"/><path d="M5 10v2a7 7 0 0 0 14 0v-2M12 19v3m-4 0h8"/></symbol>
+    <symbol id="icon-notes" viewBox="0 0 24 24"><path d="M14 2H5a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9z"/><path d="M14 2v7h7m-13 5h8m-8 4h8"/></symbol>
+    <symbol id="icon-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+    <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 11h18"/></symbol>
+    <symbol id="icon-plus" viewBox="0 0 24 24"><path d="M12 5v14m-7-7h14"/></symbol>
+    <symbol id="icon-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="icon-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h2"/></symbol>
+    <symbol id="icon-edit" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></symbol>
+    <symbol id="icon-trash" viewBox="0 0 24 24"><path d="M3 6h18m-2 0-.9 14H5.9L5 6m4 0V4h6v2m-5 4v6m4-6v6"/></symbol>
+    <symbol id="icon-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2.5"/></symbol>
+    <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></symbol>
+    <symbol id="icon-spark" viewBox="0 0 24 24"><path d="m12 3 1.9 5.8L20 11l-6.1 2.2L12 19l-2-5.8L4 11l6-2.2L12 3Zm7 11 1.2 3.1L23 18l-2.8 1-1.2 2-1-2-3-.1 3-1.8L19 14Z"/></symbol>
+    <symbol id="icon-chevron" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="icon-chevron-left" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+    <symbol id="icon-chevron-down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+    <symbol id="icon-home" viewBox="0 0 24 24"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="icon-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/></symbol>
+    <symbol id="icon-tasks" viewBox="0 0 24 24"><path d="M10 6h11M10 12h11M10 18h11"/><path d="m3 6 1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/></symbol>
+    <symbol id="icon-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+    <symbol id="icon-moon" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></symbol>
+    <symbol id="icon-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
+    <symbol id="icon-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></symbol>
+    <symbol id="icon-login" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="m10 17 5-5-5-5M15 12H3"/></symbol>
+    <symbol id="icon-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="icon-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="icon-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5m0 3h.01"/></symbol>
+    <symbol id="icon-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 16v-5m0-3h.01"/></symbol>
+    <symbol id="icon-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="icon-pin" viewBox="0 0 24 24"><path d="M12 17v5"/><path d="M9 3h6l-1 6 4 4v2H6v-2l4-4z"/></symbol>
+    <symbol id="icon-volume" viewBox="0 0 24 24"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/></symbol>
+    <symbol id="icon-download" viewBox="0 0 24 24"><path d="M12 3v12m-5-5 5 5 5-5"/><path d="M5 21h14"/></symbol>
+    <symbol id="icon-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="icon-wand" viewBox="0 0 24 24"><path d="M4 20 15 9"/><path d="m14 3 .8 2.2L17 6l-2.2.8L14 9l-.8-2.2L11 6l2.2-.8zm5 8 .5 1.5L21 13l-1.5.5L19 15l-.5-1.5L17 13l1.5-.5zM7 3l.5 1.5L9 5l-1.5.5L7 7l-.5-1.5L5 5l1.5-.5z"/></symbol>
+    <symbol id="icon-undo" viewBox="0 0 24 24"><path d="M9 14 4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></symbol>
+    <symbol id="icon-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 1 1-2.6-6.4L21 8"/><path d="M21 3v5h-5"/></symbol>
+    <symbol id="icon-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="icon-eye-off" viewBox="0 0 24 24"><path d="m3 3 18 18"/><path d="M10.6 5.1A10 10 0 0 1 12 5c6.5 0 10 7 10 7a17.6 17.6 0 0 1-3.2 4.2M6.6 6.6C3.9 8.4 2 12 2 12s3.5 7 10 7c1.9 0 3.6-.6 5-1.4"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></symbol>
+    <symbol id="icon-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+    <symbol id="icon-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></symbol>
+    <symbol id="icon-flame" viewBox="0 0 24 24"><path d="M12 22c4 0 7-2.7 7-7 0-4-3-6.5-4-10-2 1.5-3 3.5-3 5.5-1-1-1.5-2-1.5-3.5C7.5 9 5 11.5 5 15c0 4.3 3 7 7 7z"/></symbol>
+    <symbol id="icon-activity" viewBox="0 0 24 24"><path d="M3 12h4l3 8 4-16 3 8h4"/></symbol>
+    <symbol id="icon-tag" viewBox="0 0 24 24"><path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z"/><circle cx="7.5" cy="7.5" r="1.5"/></symbol>
+    <symbol id="icon-quote" viewBox="0 0 24 24"><path d="M9 7H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h3v1a3 3 0 0 1-3 3m15-10h-4a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h3v1a3 3 0 0 1-3 3"/></symbol>
+    <symbol id="icon-keyboard" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></symbol>
+    <symbol id="icon-laptop" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="11" rx="1.5"/><path d="M2 19h20"/></symbol>
+    <symbol id="icon-snooze" viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 10v6m-3-3h6M5 3 2 6m17-3 3 3"/></symbol>
+    <symbol id="icon-note-plus" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6m-8 4v6m-3-3h6"/></symbol>
+    <symbol id="icon-bolt" viewBox="0 0 24 24"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></symbol>
+    <symbol id="icon-inbox" viewBox="0 0 24 24"><path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5h13L22 12v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-6z"/></symbol>
+  </svg>
+
+  <div class="boot-screen" id="boot-screen" aria-hidden="true">
+    <span class="brand-symbol boot-symbol"><svg class="icon"><use href="#icon-waveform"/></svg></span>
+    <div class="boot-bars"><span></span><span></span><span></span><span></span><span></span></div>
+    <p>Warming up your studio…</p>
+  </div>
+
+  <!-- ================================================================ sign in -->
+  <main class="auth-screen" id="auth-screen" hidden>
+    <section class="auth-art">
+      <span class="auth-glow auth-glow-a" aria-hidden="true"></span>
+      <span class="auth-glow auth-glow-b" aria-hidden="true"></span>
+      <div class="brand brand-light">
+        <span class="brand-symbol" aria-hidden="true"><svg class="icon"><use href="#icon-waveform"/></svg></span>
+        <span class="brand-name">echo<span>studio</span></span>
+      </div>
+
+      <div class="auth-orb" aria-hidden="true">
+        <span class="auth-orb-ring"></span><span class="auth-orb-ring"></span><span class="auth-orb-ring"></span>
+        <span class="auth-orb-core"><svg class="icon"><use href="#icon-mic"/></svg></span>
+      </div>
+
+      <div class="auth-copy">
+        <span class="auth-kicker">YOUR VOICE, BEAUTIFULLY ORGANIZED</span>
+        <h2>Think out loud.<br><em>We'll keep it all.</em></h2>
+        <ul class="auth-features" id="auth-feature-list">
+          <li class="is-active"><span class="feature-icon"><svg class="icon"><use href="#icon-spark"/></svg></span><div><strong>An assistant that files for you</strong><span>Speak a thought and Echo suggests the perfect note for it.</span></div></li>
+          <li><span class="feature-icon"><svg class="icon"><use href="#icon-wand"/></svg></span><div><strong>Grammar, quietly polished</strong><span>Dictate freely. Punctuation, spelling and run-ons get fixed for you.</span></div></li>
+          <li><span class="feature-icon"><svg class="icon"><use href="#icon-bell"/></svg></span><div><strong>Reminders that actually remind you</strong><span>Mention a to-do and get a notification right on time.</span></div></li>
+        </ul>
+      </div>
+
+      <div class="auth-floaters" aria-hidden="true">
+        <div class="floater floater-a"><span class="floater-icon"><svg class="icon"><use href="#icon-bell"/></svg></span><div><strong>Call mom</strong><small>Reminder · in 5 min</small></div></div>
+        <div class="floater floater-b"><span class="floater-icon is-citron"><svg class="icon"><use href="#icon-spark"/></svg></span><div><strong>Added to “Shopping list”</strong><small>72% match · shares milk, eggs</small></div></div>
+        <div class="floater floater-c"><div class="floater-wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><small>“…and then I'll finish the deck.”</small></div>
+      </div>
+
+      <p class="auth-foot"><svg class="icon"><use href="#icon-lock"/></svg> Private &amp; local. Your notes never leave this computer.</p>
+    </section>
+
+    <section class="auth-panel">
+      <div class="auth-card">
+        <div class="auth-tabs" role="tablist" aria-label="Sign in or create an account">
+          <span class="auth-tab-indicator" aria-hidden="true"></span>
+          <button class="auth-tab is-active" id="tab-login" type="button" role="tab" aria-selected="true" aria-controls="login-form">Sign in</button>
+          <button class="auth-tab" id="tab-register" type="button" role="tab" aria-selected="false" aria-controls="register-form" tabindex="-1">Create account</button>
+        </div>
+
+        <form class="auth-form is-active" id="login-form" role="tabpanel" aria-labelledby="tab-login" novalidate>
+          <header class="auth-form-head">
+            <h1>Welcome back.</h1>
+            <p>Sign in to pick up right where you left off.</p>
+          </header>
+          <div class="float-field">
+            <input id="login-email" name="email" type="email" autocomplete="username" placeholder=" " required>
+            <label for="login-email"><svg class="icon"><use href="#icon-mail"/></svg> Email</label>
+          </div>
+          <div class="float-field has-action">
+            <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder=" " required>
+            <label for="login-password"><svg class="icon"><use href="#icon-lock"/></svg> Password</label>
+            <button class="field-action" id="login-password-toggle" type="button" aria-label="Show password" aria-pressed="false"><svg class="icon"><use href="#icon-eye"/></svg></button>
+          </div>
+          <label class="check"><input id="login-remember" type="checkbox" checked><span class="check-box" aria-hidden="true"><svg class="icon"><use href="#icon-check"/></svg></span><span>Keep me signed in</span></label>
+          <p class="form-error" id="login-error" role="alert" hidden></p>
+          <button class="btn btn-primary btn-lg btn-block auth-submit" id="login-submit" type="submit"><span class="btn-label">Sign in</span><svg class="icon"><use href="#icon-arrow-right"/></svg></button>
+          <p class="auth-switch">New to Echo? <button class="link-btn" type="button" data-auth-switch="register">Create an account</button></p>
+        </form>
+
+        <form class="auth-form" id="register-form" role="tabpanel" aria-labelledby="tab-register" novalidate hidden>
+          <header class="auth-form-head">
+            <h1>Make it yours.</h1>
+            <p>Create a private studio for your voice, notes and reminders.</p>
+          </header>
+          <div class="float-field">
+            <input id="register-name" name="name" type="text" autocomplete="name" maxlength="60" placeholder=" " required>
+            <label for="register-name"><svg class="icon"><use href="#icon-user"/></svg> Your name</label>
+          </div>
+          <div class="float-field">
+            <input id="register-email" name="email" type="email" autocomplete="username" placeholder=" " required>
+            <label for="register-email"><svg class="icon"><use href="#icon-mail"/></svg> Email</label>
+          </div>
+          <div class="float-field has-action">
+            <input id="register-password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="128" placeholder=" " required aria-describedby="password-meter-label">
+            <label for="register-password"><svg class="icon"><use href="#icon-lock"/></svg> Password</label>
+            <button class="field-action" id="register-password-toggle" type="button" aria-label="Show password" aria-pressed="false"><svg class="icon"><use href="#icon-eye"/></svg></button>
+          </div>
+          <div class="password-meter" id="password-meter" data-score="0">
+            <div class="password-meter-track"><span id="password-meter-bar"></span></div>
+            <small id="password-meter-label">Use 8 or more characters.</small>
+          </div>
+          <p class="form-error" id="register-error" role="alert" hidden></p>
+          <button class="btn btn-primary btn-lg btn-block auth-submit" id="register-submit" type="submit"><span class="btn-label">Create my studio</span><svg class="icon"><use href="#icon-arrow-right"/></svg></button>
+          <p class="auth-switch">Already have an account? <button class="link-btn" type="button" data-auth-switch="login">Sign in</button></p>
+        </form>
+
+        <p class="auth-privacy"><svg class="icon"><use href="#icon-shield"/></svg><span>Passwords are hashed with PBKDF2, and every sign-in is recorded only in your local database.</span></p>
+      </div>
+    </section>
+  </main>
+
+  <!-- ================================================================ studio -->
+  <div class="app-shell" id="app-shell" hidden>
+    <aside class="sidebar" aria-label="Main navigation">
+      <a class="brand" href="#/home" aria-label="Echo Studio home">
+        <span class="brand-symbol" aria-hidden="true"><svg class="icon"><use href="#icon-waveform"/></svg></span>
+        <span class="brand-name">echo<span>studio</span></span>
+      </a>
+
+      <span class="side-label">WORKSPACE</span>
+      <nav class="side-nav" aria-label="Workspace">
+        <span class="nav-indicator" aria-hidden="true"></span>
+        <button class="nav-link" type="button" data-view="home"><svg class="icon"><use href="#icon-home"/></svg><span>Home</span></button>
+        <button class="nav-link" type="button" data-view="assistant"><svg class="icon"><use href="#icon-spark"/></svg><span>AI Assistant</span><em class="nav-badge">AI</em></button>
+        <button class="nav-link" type="button" data-view="dictate"><svg class="icon"><use href="#icon-mic"/></svg><span>Voice to Note</span><span class="nav-rec" aria-hidden="true"></span></button>
+        <button class="nav-link" type="button" data-view="notes"><svg class="icon"><use href="#icon-notes"/></svg><span>Notes</span><kbd id="nav-notes-count">0</kbd></button>
+        <button class="nav-link" type="button" data-view="tasks"><svg class="icon"><use href="#icon-tasks"/></svg><span>Tasks</span><kbd id="nav-tasks-count">0</kbd></button>
+      </nav>
+
+      <span class="side-label">YOU</span>
+      <nav class="side-nav" aria-label="Account">
+        <span class="nav-indicator" aria-hidden="true"></span>
+        <button class="nav-link" type="button" data-view="account"><svg class="icon"><use href="#icon-shield"/></svg><span>Account &amp; security</span></button>
+      </nav>
+
+      <section class="streak-card" aria-label="Your streak">
+        <span class="streak-flame"><svg class="icon"><use href="#icon-flame"/></svg></span>
+        <div><strong id="sidebar-streak">Start a streak</strong><small id="sidebar-streak-label">Capture one thought today.</small></div>
+      </section>
+
+      <section class="privacy-note" aria-label="Privacy information">
+        <span class="privacy-icon"><span></span></span>
+        <div><strong>Yours, always.</strong><p>Saved transcripts live only on this device.</p></div>
+      </section>
+
+      <div class="profile">
+        <span class="avatar" id="sidebar-avatar" aria-hidden="true">E</span>
+        <span class="profile-copy"><strong id="sidebar-name">You</strong><small id="sidebar-email"></small></span>
+        <button class="icon-btn" id="sidebar-logout" type="button" aria-label="Sign out" title="Sign out"><svg class="icon"><use href="#icon-logout"/></svg></button>
+      </div>
+    </aside>
+
+    <div class="main-panel">
+      <header class="topbar">
+        <a class="brand brand-compact" href="#/home" aria-label="Echo Studio home">
+          <span class="brand-symbol" aria-hidden="true"><svg class="icon"><use href="#icon-waveform"/></svg></span>
+        </a>
+        <div class="breadcrumb"><span>WORKSPACE</span><svg class="icon"><use href="#icon-chevron"/></svg><strong id="breadcrumb-current">Home</strong></div>
+        <button class="search-trigger" id="palette-trigger" type="button" aria-label="Search notes or run a command (Ctrl K)">
+          <svg class="icon"><use href="#icon-search"/></svg><span>Search or jump to…</span><kbd>Ctrl K</kbd>
+        </button>
+        <div class="topbar-right">
+          <span class="engine-badge" id="engine-badge"><span class="engine-dot" aria-hidden="true"></span><span id="engine-label">Local AI</span></span>
+          <button class="icon-btn" id="theme-toggle" type="button" aria-label="Switch to dark mode" title="Toggle dark mode (Alt T)">
+            <svg class="icon theme-icon-sun"><use href="#icon-sun"/></svg><svg class="icon theme-icon-moon"><use href="#icon-moon"/></svg>
+          </button>
+          <div class="popover-anchor">
+            <button class="icon-btn" id="notif-button" type="button" aria-label="Reminders" aria-haspopup="true" aria-expanded="false" aria-controls="notif-popover">
+              <svg class="icon"><use href="#icon-bell"/></svg><span class="badge" id="notif-badge" hidden>0</span>
+            </button>
+            <div class="popover notif-popover" id="notif-popover" hidden>
+              <header class="popover-head"><strong>Reminders</strong><button class="link-btn" id="notif-mark-read" type="button">Mark all read</button></header>
+              <div class="notif-permission" id="notif-permission"></div>
+              <p class="popover-label">RECENT</p>
+              <ul class="notif-list" id="notif-list"></ul>
+              <p class="popover-label">COMING UP</p>
+              <ul class="notif-list" id="notif-upcoming"></ul>
+            </div>
+          </div>
+          <div class="popover-anchor">
+            <button class="avatar-btn" id="user-button" type="button" aria-label="Account menu" aria-haspopup="true" aria-expanded="false" aria-controls="user-popover">
+              <span class="avatar" id="topbar-avatar">E</span>
+            </button>
+            <div class="popover user-popover" id="user-popover" hidden>
+              <div class="user-popover-head"><span class="avatar avatar-lg" id="user-popover-avatar">E</span><div><strong id="user-popover-name">You</strong><small id="user-popover-email"></small></div></div>
+              <button class="menu-item" id="user-popover-account" type="button"><svg class="icon"><use href="#icon-shield"/></svg> Account &amp; security</button>
+              <button class="menu-item" id="user-popover-shortcuts" type="button"><svg class="icon"><use href="#icon-keyboard"/></svg> Keyboard shortcuts <kbd>?</kbd></button>
+              <button class="menu-item" id="user-popover-theme" type="button"><svg class="icon"><use href="#icon-moon"/></svg> <span id="user-popover-theme-label">Dark mode</span></button>
+              <hr>
+              <button class="menu-item is-danger" id="user-popover-logout" type="button"><svg class="icon"><use href="#icon-logout"/></svg> Sign out</button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main class="views" id="main-content">
+        <!-- ------------------------------------------------------------ home -->
+        <section class="view home-view" id="home-view" aria-labelledby="home-greeting" hidden>
+          <header class="home-hero">
+            <div class="home-hero-copy">
+              <div class="eyebrow"><span class="eyebrow-dot"></span><span id="home-date">TODAY</span></div>
+              <h1 class="display"><span id="home-greeting">Good evening</span>,<br><em id="home-name">friend.</em></h1>
+              <p class="home-quote"><svg class="icon"><use href="#icon-quote"/></svg><span id="home-quote"></span></p>
+            </div>
+            <div class="hero-clock" aria-label="Current time">
+              <svg class="clock-ring" viewBox="0 0 120 120" aria-hidden="true"><circle class="clock-track" cx="60" cy="60" r="54"/><circle class="clock-progress" id="home-day-ring" cx="60" cy="60" r="54"/></svg>
+              <div class="clock-face"><strong id="home-clock">--:--</strong><span id="home-ampm"></span></div>
+              <small id="home-day-label">of today behind you</small>
+            </div>
+          </header>
+
+          <div class="launch-grid">
+            <button class="launch-card launch-assistant" type="button" data-view="assistant">
+              <span class="launch-visual" aria-hidden="true"><span class="mini-orb"><span></span><span></span><span></span></span></span>
+              <span class="launch-kicker"><svg class="icon"><use href="#icon-spark"/></svg> AI ASSISTANT</span>
+              <strong class="launch-title">Think out loud.<br><em>I'll find it a home.</em></strong>
+              <span class="launch-text">Speak freely. I'll suggest a new note or the perfect existing one, and turn to-dos into reminders.</span>
+              <span class="launch-cta">Start talking <svg class="icon"><use href="#icon-arrow-right"/></svg></span>
+            </button>
+            <button class="launch-card launch-dictate" type="button" data-view="dictate">
+              <span class="launch-visual" aria-hidden="true"><span class="mini-wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></span>
+              <span class="launch-kicker"><svg class="icon"><use href="#icon-mic"/></svg> VOICE TO NOTE</span>
+              <strong class="launch-title">Speak it.<br><em>Read it polished.</em></strong>
+              <span class="launch-text">Live transcription with automatic grammar fixes, voice commands, and smart reminders.</span>
+              <span class="launch-cta">Start dictating <svg class="icon"><use href="#icon-arrow-right"/></svg></span>
+            </button>
+          </div>
+
+          <div class="stat-grid">
+            <article class="stat-card"><span class="stat-icon"><svg class="icon"><use href="#icon-notes"/></svg></span><span class="stat-label">NOTES</span><strong class="stat-value" id="stat-notes">0</strong><small id="stat-notes-sub">—</small></article>
+            <article class="stat-card"><span class="stat-icon"><svg class="icon"><use href="#icon-waveform"/></svg></span><span class="stat-label">WORDS CAPTURED</span><strong class="stat-value" id="stat-words">0</strong><small id="stat-words-sub">—</small></article>
+            <article class="stat-card"><span class="stat-icon"><svg class="icon"><use href="#icon-bell"/></svg></span><span class="stat-label">DUE TODAY</span><strong class="stat-value" id="stat-due">0</strong><small id="stat-due-sub">—</small></article>
+            <article class="stat-card"><span class="stat-icon is-flame"><svg class="icon"><use href="#icon-flame"/></svg></span><span class="stat-label">DAY STREAK</span><strong class="stat-value" id="stat-streak">0</strong><small id="stat-streak-sub">—</small></article>
+          </div>
+
+          <div class="home-grid">
+            <section class="panel panel-tasks" aria-labelledby="home-tasks-heading">
+              <div class="panel-head"><h2 id="home-tasks-heading">Up next</h2><button class="text-btn" type="button" data-view="tasks">ALL TASKS <svg class="icon"><use href="#icon-chevron"/></svg></button></div>
+              <ul class="mini-task-list" id="home-tasks"></ul>
+            </section>
+            <section class="panel panel-notes" aria-labelledby="home-notes-heading">
+              <div class="panel-head"><h2 id="home-notes-heading">Recently captured</h2><button class="text-btn" type="button" data-view="notes">ALL NOTES <svg class="icon"><use href="#icon-chevron"/></svg></button></div>
+              <div class="mini-note-list" id="home-notes"></div>
+            </section>
+            <section class="panel panel-rhythm" aria-labelledby="home-rhythm-heading">
+              <div class="panel-head"><h2 id="home-rhythm-heading">Your rhythm</h2><span class="panel-meta" id="home-rhythm-meta">LAST 12 WEEKS</span></div>
+              <div class="heatmap" id="home-heatmap" role="img" aria-label="Your activity over the last 12 weeks"></div>
+              <div class="heatmap-legend" aria-hidden="true"><span>Less</span><i class="level-0"></i><i class="level-1"></i><i class="level-2"></i><i class="level-3"></i><i class="level-4"></i><span>More</span></div>
+            </section>
+            <section class="panel panel-topics" aria-labelledby="home-topics-heading">
+              <div class="panel-head"><h2 id="home-topics-heading">On your mind</h2><span class="panel-meta">TOPICS</span></div>
+              <ul class="topic-bars" id="home-topics"></ul>
+            </section>
+            <section class="panel panel-tip" aria-labelledby="home-tip-heading">
+              <div class="panel-head"><h2 id="home-tip-heading">Try saying</h2>
+                <div class="tip-nav">
+                  <button class="icon-btn icon-btn-sm" id="home-tip-prev" type="button" aria-label="Previous tip"><svg class="icon"><use href="#icon-chevron-left"/></svg></button>
+                  <button class="icon-btn icon-btn-sm" id="home-tip-next" type="button" aria-label="Next tip"><svg class="icon"><use href="#icon-chevron"/></svg></button>
+                </div>
+              </div>
+              <p class="tip-text" id="home-tip" aria-live="polite"></p>
+              <div class="tip-dots" id="home-tip-dots" aria-hidden="true"></div>
+            </section>
+          </div>
+        </section>
+
+        <!-- ------------------------------------------------------------ assistant -->
+        <section class="view assistant-view" id="assistant-view" aria-labelledby="assistant-heading" hidden>
+          <div class="split-layout">
+            <div class="split-main">
+              <header class="page-head">
+                <div class="eyebrow"><span class="eyebrow-dot"></span>AI ASSISTANT · <span id="assistant-engine">LOCAL ENGINE</span></div>
+                <h1 class="display" id="assistant-heading">Talk it through.<br><em>I'll find it a home.</em></h1>
+                <p class="lede">Record a thought and I'll recommend a new note or the best existing one. Ask about your tasks and notes, or set a reminder, all by voice.</p>
+              </header>
+
+              <section class="chat-panel" aria-label="Assistant conversation">
+                <div class="chat-toolbar">
+                  <div class="live-label" id="assistant-status"><span class="status-dot"></span><span>READY</span></div>
+                  <div class="chat-tools">
+                    <label class="select-pill"><span class="visually-hidden">Speech recognition language</span>
+                      <select id="assistant-language" aria-label="Speech recognition language">
+                        <option value="en-US">English (US)</option><option value="en-IN">English (India)</option><option value="en-GB">English (UK)</option><option value="en-AU">English (Australia)</option><option value="hi-IN">Hindi</option><option value="es-ES">Spanish</option><option value="fr-FR">French</option><option value="de-DE">German</option>
+                      </select>
+                    </label>
+                    <label class="switch switch-sm" title="Read Echo's replies aloud"><input id="speak-replies" type="checkbox" checked><span class="switch-track" aria-hidden="true"></span><span>Voice replies</span></label>
+                    <button class="icon-btn icon-btn-sm" id="clear-chat" type="button" aria-label="Clear conversation" title="Clear conversation"><svg class="icon"><use href="#icon-refresh"/></svg></button>
+                  </div>
+                </div>
+
+                <div class="orb-stage" id="orb-stage">
+                  <button class="orb" id="assistant-orb" type="button" aria-label="Start talking to Echo">
+                    <span class="orb-halo" aria-hidden="true"></span>
+                    <span class="orb-ring" aria-hidden="true"></span>
+                    <span class="orb-ring orb-ring-late" aria-hidden="true"></span>
+                    <span class="orb-core" aria-hidden="true"><svg class="icon orb-icon-mic"><use href="#icon-mic"/></svg><svg class="icon orb-icon-stop"><use href="#icon-stop"/></svg></span>
+                  </button>
+                  <p class="orb-caption" id="orb-caption">Tap the orb and start talking</p>
+                  <p class="orb-live" id="orb-live" aria-live="polite"></p>
+                </div>
+
+                <div class="chat-feed" id="chat-feed" role="log" aria-live="polite" aria-label="Conversation messages"></div>
+
+                <div class="suggestion-area">
+                  <span class="suggestion-label">TRY ONE OF THESE</span>
+                  <div class="suggestions">
+                    <button class="chip suggestion-chip" type="button" data-prompt="Remind me to call mom at 6 pm"><svg class="icon"><use href="#icon-bell"/></svg> Remind me to call mom at 6 pm</button>
+                    <button class="chip suggestion-chip" type="button" data-prompt="What's on my list today?"><svg class="icon"><use href="#icon-tasks"/></svg> What's on my list today?</button>
+                    <button class="chip suggestion-chip" type="button" data-prompt="Take a note that the Wi-Fi password is on the fridge"><svg class="icon"><use href="#icon-note-plus"/></svg> Take a note…</button>
+                    <button class="chip suggestion-chip" type="button" data-prompt="Add oat milk to my shopping list"><svg class="icon"><use href="#icon-plus"/></svg> Add oat milk to my shopping list</button>
+                    <button class="chip suggestion-chip" type="button" data-prompt="Find notes about ideas"><svg class="icon"><use href="#icon-search"/></svg> Find notes about ideas</button>
+                    <button class="chip suggestion-chip" type="button" data-prompt="Tell me a joke"><svg class="icon"><use href="#icon-spark"/></svg> Tell me a joke</button>
+                  </div>
+                </div>
+
+                <form class="composer" id="command-form">
+                  <button class="composer-mic" id="assistant-mic" type="button" aria-label="Speak to Echo" title="Speak to Echo (Alt M)"><svg class="icon"><use href="#icon-mic"/></svg></button>
+                  <label class="visually-hidden" for="command-input">Message Echo</label>
+                  <input id="command-input" type="text" maxlength="5000" placeholder="Say something, or type it here…" autocomplete="off">
+                  <button class="composer-send" id="command-send" type="submit" aria-label="Send message" title="Send"><svg class="icon"><use href="#icon-send"/></svg></button>
+                </form>
+                <p class="composer-hint"><kbd>↵</kbd> to send <span class="hint-dot">·</span> <kbd>Alt</kbd> <kbd>M</kbd> to talk <span class="hint-dot">·</span> saved notes stay on this device</p>
+              </section>
+            </div>
+
+            <aside class="split-aside" aria-label="Assistant guide">
+              <section class="panel how-card">
+                <div class="panel-head"><h2>How it works</h2></div>
+                <ol class="how-steps">
+                  <li><span class="step-num">1</span><div><strong>Speak a thought</strong><span>Tap the orb and talk naturally. Pause when you're done.</span></div></li>
+                  <li><span class="step-num">2</span><div><strong>Echo reads it</strong><span>Grammar is polished; topics and to-dos are detected.</span></div></li>
+                  <li><span class="step-num">3</span><div><strong>Pick its home</strong><span>Add it to the suggested note, choose another, or start fresh.</span></div></li>
+                </ol>
+              </section>
+              <section class="panel notebooks-card">
+                <div class="panel-head"><h2>Your notebooks</h2><span class="count-pill" id="assistant-notebook-count">0</span></div>
+                <ul class="notebook-list" id="assistant-notebooks"></ul>
+              </section>
+              <section class="panel skills-card">
+                <div class="panel-head"><h2>I can also</h2></div>
+                <ul class="skill-list">
+                  <li><svg class="icon"><use href="#icon-bell"/></svg><span>Set reminders: “remind me tomorrow at 9 to call the bank”</span></li>
+                  <li><svg class="icon"><use href="#icon-search"/></svg><span>Search: “find notes about travel”</span></li>
+                  <li><svg class="icon"><use href="#icon-volume"/></svg><span>Read your latest note aloud</span></li>
+                  <li><svg class="icon"><use href="#icon-clock"/></svg><span>Time, date, and quick maths</span></li>
+                  <li><svg class="icon"><use href="#icon-spark"/></svg><span>Jokes, quotes, and coin flips</span></li>
+                </ul>
+              </section>
+            </aside>
+          </div>
+        </section>
+
+        <!-- ------------------------------------------------------------ dictation -->
+        <section class="view dictate-view" id="dictate-view" aria-labelledby="dictate-heading" hidden>
+          <header class="page-head is-row">
+            <div>
+              <div class="eyebrow"><span class="eyebrow-dot"></span>VOICE TO NOTE</div>
+              <h1 class="display" id="dictate-heading">Speak freely.<br><em>Read it polished.</em></h1>
+              <p class="lede">Live transcription with automatic grammar fixes. Mention a to-do and it becomes a reminder.</p>
+            </div>
+            <dl class="live-stats" aria-label="Dictation statistics">
+              <div><dt>WORDS</dt><dd id="dictate-words">0</dd></div>
+              <div><dt>WPM</dt><dd id="dictate-wpm">—</dd></div>
+              <div><dt>TIME</dt><dd id="dictate-time">00:00</dd></div>
+            </dl>
+          </header>
+
+          <div class="split-layout">
+            <section class="studio-card split-main" aria-label="Dictation studio">
+              <div class="studio-toolbar">
+                <label class="select-pill"><span class="visually-hidden">Dictation language</span>
+                  <select id="dictate-language" aria-label="Dictation language">
+                    <option value="en-US">English (US)</option><option value="en-IN">English (India)</option><option value="en-GB">English (UK)</option><option value="en-AU">English (Australia)</option><option value="hi-IN">Hindi</option><option value="es-ES">Spanish</option><option value="fr-FR">French</option><option value="de-DE">German</option>
+                  </select>
+                </label>
+                <div class="studio-toggles">
+                  <label class="switch switch-sm" title="Fix grammar automatically when you stop recording"><input id="auto-polish" type="checkbox" checked><span class="switch-track" aria-hidden="true"></span><span>Auto-polish</span></label>
+                  <label class="switch switch-sm" title="Say “comma”, “new line”, “scratch that”…"><input id="voice-commands" type="checkbox" checked><span class="switch-track" aria-hidden="true"></span><span>Voice commands</span></label>
+                  <label class="switch switch-sm" title="Turn mentioned to-dos into reminders"><input id="detect-todos" type="checkbox" checked><span class="switch-track" aria-hidden="true"></span><span>Detect to-dos</span></label>
+                </div>
+              </div>
+
+              <div class="studio-stage" id="studio-stage">
+                <canvas class="wave-canvas" id="dictate-wave" aria-hidden="true"></canvas>
+                <button class="record-orb" id="dictate-record" type="button" aria-label="Start dictating" title="Start or stop (Alt R)">
+                  <span class="record-halo" aria-hidden="true"></span>
+                  <span class="record-core" aria-hidden="true"><svg class="icon rec-icon-mic"><use href="#icon-mic"/></svg><svg class="icon rec-icon-stop"><use href="#icon-stop"/></svg></span>
+                </button>
+                <p class="studio-status" id="dictate-status" aria-live="polite">Tap the button and start speaking</p>
+              </div>
+
+              <div class="editor">
+                <label class="visually-hidden" for="dictate-title">Note title</label>
+                <input class="title-input" id="dictate-title" type="text" maxlength="120" placeholder="Untitled note" autocomplete="off">
+                <div class="tag-row" id="dictate-tags" aria-live="polite"></div>
+                <div class="editor-body">
+                  <label class="visually-hidden" for="dictate-text">Transcript</label>
+                  <textarea id="dictate-text" maxlength="20000" rows="8" placeholder="Your words appear here as you speak. You can also type or paste."></textarea>
+                  <p class="interim" id="dictate-interim" aria-hidden="true"></p>
+                </div>
+                <div class="polish-bar" id="polish-bar" hidden>
+                  <span class="polish-badge" aria-hidden="true"><svg class="icon"><use href="#icon-wand"/></svg></span>
+                  <div class="polish-copy"><strong id="polish-summary">Polished</strong><small id="polish-detail"></small></div>
+                  <button class="btn btn-ghost btn-sm" id="polish-diff-toggle" type="button" aria-expanded="true" aria-controls="polish-diff">Hide changes</button>
+                  <button class="btn btn-ghost btn-sm" id="polish-undo" type="button"><svg class="icon"><use href="#icon-undo"/></svg> Undo</button>
+                </div>
+                <div class="diff-view" id="polish-diff" hidden></div>
+              </div>
+
+              <div class="studio-actions">
+                <div class="studio-actions-left">
+                  <button class="btn btn-soft btn-sm" id="polish-button" type="button"><svg class="icon"><use href="#icon-wand"/></svg> Polish now</button>
+                  <button class="icon-btn" id="read-aloud-button" type="button" aria-label="Read aloud" title="Read aloud"><svg class="icon"><use href="#icon-volume"/></svg></button>
+                  <button class="icon-btn is-danger" id="dictate-clear" type="button" aria-label="Clear transcript" title="Clear"><svg class="icon"><use href="#icon-trash"/></svg></button>
+                </div>
+                <div class="studio-actions-right">
+                  <label class="select-pill select-destination"><span class="visually-hidden">Save to</span><select id="dictate-destination" aria-label="Save to"></select></label>
+                  <button class="btn btn-primary" id="dictate-save" type="button"><svg class="icon"><use href="#icon-check"/></svg><span>Save note</span></button>
+                </div>
+              </div>
+
+              <div class="ai-suggestion" id="dictate-suggestion" hidden>
+                <span class="ai-suggestion-icon" aria-hidden="true"><svg class="icon"><use href="#icon-spark"/></svg></span>
+                <p id="dictate-suggestion-text"></p>
+                <button class="btn btn-soft btn-sm" id="dictate-suggestion-use" type="button">Use it</button>
+              </div>
+            </section>
+
+            <aside class="split-aside" aria-label="Dictation helpers">
+              <section class="panel todo-panel">
+                <div class="panel-head"><h2>Detected to-dos</h2><span class="count-pill" id="todo-count">0</span></div>
+                <ul class="todo-list" id="detected-todos"></ul>
+                <div class="notify-status" id="dictate-notify"></div>
+              </section>
+              <section class="panel commands-panel">
+                <div class="panel-head"><h2>Voice commands</h2></div>
+                <ul class="command-list">
+                  <li><span>“comma” · “period”</span><kbd>, .</kbd></li>
+                  <li><span>“question mark”</span><kbd>?</kbd></li>
+                  <li><span>“new line” · “new paragraph”</span><kbd>↵</kbd></li>
+                  <li><span>“scratch that”</span><kbd>⌫</kbd></li>
+                  <li><span>“stop listening”</span><kbd>■</kbd></li>
+                  <li><span>“save note”</span><kbd>✓</kbd></li>
+                </ul>
+              </section>
+            </aside>
+          </div>
+        </section>
+
+        <!-- ------------------------------------------------------------ notes -->
+        <section class="view notes-view" id="notes-view" aria-labelledby="notes-heading" hidden>
+          <header class="page-head is-row">
+            <div>
+              <div class="eyebrow"><span class="eyebrow-dot"></span>YOUR LIBRARY</div>
+              <h1 class="display" id="notes-heading">The things you<br><em>didn't want to forget.</em></h1>
+              <p class="lede">Little ideas, captured in your own words.</p>
+            </div>
+            <div class="page-head-actions">
+              <button class="btn btn-soft" id="export-notes-button" type="button"><svg class="icon"><use href="#icon-download"/></svg> Export</button>
+              <button class="btn btn-primary" id="new-note-button" type="button"><svg class="icon"><use href="#icon-plus"/></svg> New note</button>
+            </div>
+          </header>
+          <div class="notes-toolbar">
+            <div class="chip-row" id="tag-filters" role="toolbar" aria-label="Filter notes by topic"></div>
+            <div class="notes-toolbar-right">
+              <label class="select-pill"><span class="visually-hidden">Sort notes</span>
+                <select id="notes-sort" aria-label="Sort notes">
+                  <option value="recent">Recently updated</option><option value="newest">Newest first</option><option value="oldest">Oldest first</option><option value="az">Title A–Z</option><option value="longest">Longest first</option>
+                </select>
+              </label>
+              <label class="search-box"><svg class="icon"><use href="#icon-search"/></svg><span class="visually-hidden">Search your notes</span><input id="notes-search" type="search" placeholder="Find a thought…" autocomplete="off"></label>
+            </div>
+          </div>
+          <p class="count-label" id="notes-total">0 NOTES</p>
+          <div class="notes-grid" id="notes-grid" aria-live="polite"></div>
+          <section class="empty-state" id="notes-zero-state" hidden>
+            <span class="empty-icon"><svg class="icon"><use href="#icon-waveform"/></svg></span>
+            <h2>A lovely blank page.</h2>
+            <p>That means there's room for your next big thought.</p>
+            <button class="btn btn-primary" type="button" id="empty-note-button"><svg class="icon"><use href="#icon-mic"/></svg> Record your first note</button>
+          </section>
+        </section>
+
+        <!-- ------------------------------------------------------------ tasks -->
+        <section class="view tasks-view" id="tasks-view" aria-labelledby="tasks-heading" hidden>
+          <header class="page-head is-row">
+            <div>
+              <div class="eyebrow"><span class="eyebrow-dot"></span>TASKS &amp; REMINDERS</div>
+              <h1 class="display" id="tasks-heading">Gently reminded,<br><em>quietly done.</em></h1>
+              <p class="lede">Type or say a task with a time, like “call mom tomorrow at 6 pm”, and Echo will nudge you when it's due.</p>
+            </div>
+            <div class="progress-card">
+              <svg class="progress-ring" viewBox="0 0 80 80" aria-hidden="true"><circle class="ring-track" cx="40" cy="40" r="34"/><circle class="ring-value" id="tasks-ring" cx="40" cy="40" r="34"/></svg>
+              <div><strong id="tasks-progress-value">0%</strong><small id="tasks-progress-label">Nothing due today</small></div>
+            </div>
+          </header>
+
+          <div class="notify-banner" id="notify-banner" hidden>
+            <span class="notify-banner-icon" aria-hidden="true"><svg class="icon"><use href="#icon-bell"/></svg></span>
+            <p id="notify-banner-text">Turn on notifications to get a nudge the moment a task is due.</p>
+            <div class="notify-banner-actions">
+              <button class="btn btn-primary btn-sm" id="notify-enable" type="button">Enable reminders</button>
+              <button class="btn btn-ghost btn-sm" id="notify-test" type="button">Send a test</button>
+            </div>
+          </div>
+
+          <form class="task-composer" id="task-form">
+            <span class="task-composer-icon" aria-hidden="true"><svg class="icon"><use href="#icon-plus"/></svg></span>
+            <label class="visually-hidden" for="task-input">New task</label>
+            <input id="task-input" type="text" maxlength="300" placeholder="Add a task, e.g. “water the plants in 30 minutes”" autocomplete="off">
+            <button class="icon-btn" id="task-mic" type="button" aria-label="Say a task" title="Say a task"><svg class="icon"><use href="#icon-mic"/></svg></button>
+            <button class="btn btn-primary btn-sm" id="task-add" type="submit">Add</button>
+          </form>
+
+          <div class="segmented" id="task-filters" role="tablist" aria-label="Filter tasks">
+            <span class="segment-indicator" aria-hidden="true"></span>
+            <button class="segment is-active" type="button" role="tab" aria-selected="true" data-filter="today">Today <span class="segment-count" data-count="today">0</span></button>
+            <button class="segment" type="button" role="tab" aria-selected="false" data-filter="upcoming">Upcoming <span class="segment-count" data-count="upcoming">0</span></button>
+            <button class="segment" type="button" role="tab" aria-selected="false" data-filter="anytime">Anytime <span class="segment-count" data-count="anytime">0</span></button>
+            <button class="segment" type="button" role="tab" aria-selected="false" data-filter="done">Done <span class="segment-count" data-count="done">0</span></button>
+          </div>
+          <ul class="task-list" id="task-list" aria-live="polite"></ul>
+          <section class="empty-state is-compact" id="tasks-empty" hidden>
+            <span class="empty-icon"><svg class="icon"><use href="#icon-check-circle"/></svg></span>
+            <h2 id="tasks-empty-title">All clear.</h2>
+            <p id="tasks-empty-text">Nothing due today. Enjoy the breathing room.</p>
+          </section>
+        </section>
+
+        <!-- ------------------------------------------------------------ account -->
+        <section class="view account-view" id="account-view" aria-labelledby="account-heading" hidden>
+          <header class="page-head">
+            <div class="eyebrow"><span class="eyebrow-dot"></span>ACCOUNT &amp; SECURITY</div>
+            <h1 class="display" id="account-heading">Hello, <em id="account-name">you</em>.</h1>
+            <p class="lede">Your profile, your preferences, and a record of every sign-in to this studio.</p>
+          </header>
+          <div class="account-grid">
+            <section class="panel profile-panel" aria-label="Profile">
+              <div class="profile-hero"><span class="avatar avatar-xl" id="account-avatar">E</span><div><strong id="account-display-name">—</strong><small id="account-email">—</small></div></div>
+              <dl class="fact-grid">
+                <div><dt>Member since</dt><dd id="account-since">—</dd></div>
+                <div><dt>Sign-ins</dt><dd id="account-logins">0</dd></div>
+                <div><dt>Previous sign-in</dt><dd id="account-last">—</dd></div>
+                <div><dt>Failed attempts</dt><dd id="account-failed">0</dd></div>
+              </dl>
+              <button class="btn btn-soft btn-block" id="account-logout" type="button"><svg class="icon"><use href="#icon-logout"/></svg> Sign out of this device</button>
+            </section>
+
+            <section class="panel prefs-panel" aria-labelledby="prefs-heading">
+              <div class="panel-head"><h2 id="prefs-heading">Preferences</h2></div>
+              <div class="pref-row"><div><strong>Theme</strong><small>Match your system, or pick one.</small></div>
+                <div class="segmented is-small" id="pref-theme" role="radiogroup" aria-label="Theme">
+                  <span class="segment-indicator" aria-hidden="true"></span>
+                  <button class="segment" type="button" role="radio" aria-checked="false" data-theme-choice="light"><svg class="icon"><use href="#icon-sun"/></svg> Light</button>
+                  <button class="segment" type="button" role="radio" aria-checked="false" data-theme-choice="dark"><svg class="icon"><use href="#icon-moon"/></svg> Dark</button>
+                  <button class="segment" type="button" role="radio" aria-checked="false" data-theme-choice="system"><svg class="icon"><use href="#icon-laptop"/></svg> Auto</button>
+                </div>
+              </div>
+              <div class="pref-row"><div><strong>Voice language</strong><small>Default for dictation and the assistant.</small></div>
+                <label class="select-pill"><span class="visually-hidden">Default voice language</span>
+                  <select id="pref-language" aria-label="Default voice language">
+                    <option value="en-US">English (US)</option><option value="en-IN">English (India)</option><option value="en-GB">English (UK)</option><option value="en-AU">English (Australia)</option><option value="hi-IN">Hindi</option><option value="es-ES">Spanish</option><option value="fr-FR">French</option><option value="de-DE">German</option>
+                  </select>
+                </label>
+              </div>
+              <div class="pref-row"><div><strong>Auto-polish dictation</strong><small>Fix grammar when you stop recording.</small></div><label class="switch"><input id="pref-autopolish" type="checkbox"><span class="switch-track" aria-hidden="true"></span><span class="visually-hidden">Auto-polish dictation</span></label></div>
+              <div class="pref-row"><div><strong>Voice commands</strong><small>“comma”, “new line”, “scratch that”…</small></div><label class="switch"><input id="pref-voicecommands" type="checkbox"><span class="switch-track" aria-hidden="true"></span><span class="visually-hidden">Voice commands</span></label></div>
+              <div class="pref-row"><div><strong>Detect to-dos</strong><small>Suggest reminders from what you say.</small></div><label class="switch"><input id="pref-todos" type="checkbox"><span class="switch-track" aria-hidden="true"></span><span class="visually-hidden">Detect to-dos</span></label></div>
+              <div class="pref-row"><div><strong>Spoken replies</strong><small>The assistant reads its answers aloud.</small></div><label class="switch"><input id="pref-speak" type="checkbox"><span class="switch-track" aria-hidden="true"></span><span class="visually-hidden">Spoken replies</span></label></div>
+              <div class="pref-row"><div><strong>Reminder chime</strong><small>Play a soft sound when a task is due.</small></div><label class="switch"><input id="pref-sound" type="checkbox"><span class="switch-track" aria-hidden="true"></span><span class="visually-hidden">Reminder chime</span></label></div>
+            </section>
+
+            <section class="panel activity-panel" aria-labelledby="activity-heading">
+              <div class="panel-head"><h2 id="activity-heading">Sign-in activity</h2><button class="btn btn-ghost btn-sm" id="activity-download" type="button"><svg class="icon"><use href="#icon-download"/></svg> Download CSV</button></div>
+              <p class="panel-sub">Every registration, sign-in, sign-out, and failed attempt is recorded in your local database. <span id="activity-count"></span></p>
+              <ol class="activity-list" id="activity-list"></ol>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <nav class="tabbar" aria-label="Main navigation">
+      <button class="tab" type="button" data-view="home"><svg class="icon"><use href="#icon-home"/></svg><span>Home</span></button>
+      <button class="tab" type="button" data-view="assistant"><svg class="icon"><use href="#icon-spark"/></svg><span>Assistant</span></button>
+      <button class="tab tab-primary" type="button" data-view="dictate"><span class="tab-primary-core"><svg class="icon"><use href="#icon-mic"/></svg></span><span>Dictate</span></button>
+      <button class="tab" type="button" data-view="notes"><svg class="icon"><use href="#icon-notes"/></svg><span>Notes</span></button>
+      <button class="tab" type="button" data-view="tasks"><svg class="icon"><use href="#icon-tasks"/></svg><span>Tasks</span></button>
+    </nav>
+  </div>
+
+  <!-- ================================================================ dialogs -->
+  <div class="modal" id="note-modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-dialog note-dialog" role="dialog" aria-modal="true" aria-labelledby="note-modal-title">
+      <header class="note-dialog-head">
+        <span class="note-emoji" id="note-modal-emoji" aria-hidden="true">📝</span>
+        <label class="visually-hidden" for="note-modal-title">Note title</label>
+        <input class="note-title-input" id="note-modal-title" type="text" maxlength="120" placeholder="Untitled note" autocomplete="off">
+        <button class="icon-btn" id="note-modal-pin" type="button" aria-label="Pin note" aria-pressed="false" title="Pin to the top"><svg class="icon"><use href="#icon-pin"/></svg></button>
+        <button class="icon-btn" type="button" data-close aria-label="Close" title="Close (Esc)"><svg class="icon"><use href="#icon-x"/></svg></button>
+      </header>
+      <p class="note-meta" id="note-modal-meta"></p>
+      <label class="visually-hidden" for="note-modal-text">Note text</label>
+      <textarea class="note-textarea" id="note-modal-text" maxlength="20000" rows="10"></textarea>
+      <div class="note-dialog-tags"><svg class="icon"><use href="#icon-tag"/></svg><label class="visually-hidden" for="note-modal-tags">Tags</label><input id="note-modal-tags" type="text" placeholder="Add tags, separated by commas" autocomplete="off"></div>
+      <div class="note-linked" id="note-modal-tasks"></div>
+      <p class="note-polish-status" id="note-modal-polish-status" hidden></p>
+      <footer class="note-dialog-foot">
+        <div class="foot-left">
+          <button class="icon-btn is-danger" id="note-modal-delete" type="button" aria-label="Delete note" title="Delete"><svg class="icon"><use href="#icon-trash"/></svg></button>
+          <button class="icon-btn" id="note-modal-download" type="button" aria-label="Download as Markdown" title="Download .md"><svg class="icon"><use href="#icon-download"/></svg></button>
+          <button class="icon-btn" id="note-modal-copy" type="button" aria-label="Copy note text" title="Copy"><svg class="icon"><use href="#icon-copy"/></svg></button>
+          <button class="icon-btn" id="note-modal-read" type="button" aria-label="Read aloud" title="Read aloud"><svg class="icon"><use href="#icon-volume"/></svg></button>
+          <button class="btn btn-soft btn-sm" id="note-modal-polish" type="button"><svg class="icon"><use href="#icon-wand"/></svg> Polish</button>
+        </div>
+        <div class="foot-right">
+          <button class="btn btn-ghost" type="button" data-close>Cancel</button>
+          <button class="btn btn-primary" id="note-modal-save" type="button">Save changes</button>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <div class="modal palette" id="palette" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-dialog palette-dialog" role="dialog" aria-modal="true" aria-label="Search and commands">
+      <div class="palette-search">
+        <svg class="icon"><use href="#icon-search"/></svg>
+        <label class="visually-hidden" for="palette-input">Search notes or type a command</label>
+        <input id="palette-input" type="text" placeholder="Search notes, tasks, or commands…" autocomplete="off" role="combobox" aria-expanded="true" aria-controls="palette-list" aria-autocomplete="list">
+        <kbd>Esc</kbd>
+      </div>
+      <ul class="palette-list" id="palette-list" role="listbox" aria-label="Results"></ul>
+      <footer class="palette-foot"><span><kbd>↑</kbd><kbd>↓</kbd> navigate</span><span><kbd>↵</kbd> open</span><span><kbd>Esc</kbd> close</span></footer>
+    </div>
+  </div>
+
+  <div class="modal" id="confirm-modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-dialog confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+      <span class="confirm-icon" aria-hidden="true"><svg class="icon"><use href="#icon-trash"/></svg></span>
+      <h2 id="confirm-title">Are you sure?</h2>
+      <p id="confirm-message"></p>
+      <footer><button class="btn btn-ghost" id="confirm-cancel" type="button">Cancel</button><button class="btn btn-danger" id="confirm-ok" type="button">Delete</button></footer>
+    </div>
+  </div>
+
+  <div class="modal" id="shortcuts-modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-dialog shortcuts-dialog" role="dialog" aria-modal="true" aria-labelledby="shortcuts-title">
+      <header class="dialog-head"><h2 id="shortcuts-title">Keyboard shortcuts</h2><button class="icon-btn" type="button" data-close aria-label="Close"><svg class="icon"><use href="#icon-x"/></svg></button></header>
+      <dl class="shortcut-list">
+        <div><dt><kbd>Ctrl</kbd> <kbd>K</kbd></dt><dd>Search and commands</dd></div>
+        <div><dt><kbd>Alt</kbd> <kbd>1</kbd> – <kbd>6</kbd></dt><dd>Jump between sections</dd></div>
+        <div><dt><kbd>Alt</kbd> <kbd>M</kbd></dt><dd>Talk to the assistant</dd></div>
+        <div><dt><kbd>Alt</kbd> <kbd>R</kbd></dt><dd>Start or stop dictation</dd></div>
+        <div><dt><kbd>Alt</kbd> <kbd>N</kbd></dt><dd>New note</dd></div>
+        <div><dt><kbd>Alt</kbd> <kbd>T</kbd></dt><dd>Toggle dark mode</dd></div>
+        <div><dt><kbd>?</kbd></dt><dd>Show this list</dd></div>
+        <div><dt><kbd>Esc</kbd></dt><dd>Close dialogs and menus</dd></div>
+      </dl>
+    </div>
+  </div>
+
+  <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+</body>
+</html>
