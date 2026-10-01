@@ -12,17 +12,25 @@ export class ApiError extends Error {
 const SIGN_IN_ROUTES = new Set(["/api/auth/login", "/api/auth/register", "/api/auth/me"]);
 
 export async function api(path, { method = "GET", body } = {}) {
+  // The static GitHub Pages build answers requests in the browser instead of a server.
+  const backend = window.echoBackend;
+  const request = {
+    method,
+    cache: "no-store",
+    credentials: "same-origin",
+    headers: body === undefined ? {} : { "Content-Type": "application/json" },
+    body: body === undefined ? undefined : JSON.stringify(body),
+  };
   let response;
   try {
-    response = await fetch(path, {
-      method,
-      cache: "no-store",
-      credentials: "same-origin",
-      headers: body === undefined ? {} : { "Content-Type": "application/json" },
-      body: body === undefined ? undefined : JSON.stringify(body),
-    });
+    response = backend ? await backend.fetch(path, request) : await fetch(path, request);
   } catch {
-    throw new ApiError("Echo's local server isn't reachable. Is it still running?", 0);
+    throw new ApiError(
+      backend
+        ? "Echo's in-browser engine couldn't start. Check your connection and reload the page."
+        : "Echo's local server isn't reachable. Is it still running?",
+      0,
+    );
   }
 
   if (response.status === 204) return null;

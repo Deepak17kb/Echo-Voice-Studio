@@ -1,10 +1,70 @@
+<div align="center">
+
+<img src="web/icon.svg" width="72" height="72" alt="">
+
 # Echo Voice Studio
 
-A private, local-first voice studio built from the original Python speech-recognition demo. Talk to an AI assistant that suggests where each thought belongs, dictate notes that get their grammar polished automatically, and turn the to-dos you mention into reminders that notify you on time. It all runs on your computer with no required third-party packages.
+**Think out loud. We'll keep it all.**
 
-## Start on Windows
+A private voice studio: an AI assistant that files your thoughts, dictation with automatic grammar polish,<br>
+and reminders that actually remind you. Pure Python on the server, plain JavaScript in the browser.
 
-Double-click **`run.bat`**. It starts the local server and opens the studio in your browser. Keep its window open while you use Echo; press **Ctrl+C** there to stop.
+[**Try it live**](https://deepak17kb.github.io/Echo-Voice-Studio/) · [Run it on your computer](#run-it-on-your-computer) · [How the live version works](#how-the-live-version-works)
+
+[![Tests and deploy](https://github.com/Deepak17kb/Echo-Voice-Studio/actions/workflows/pages.yml/badge.svg)](https://github.com/Deepak17kb/Echo-Voice-Studio/actions/workflows/pages.yml)
+[![Live demo](https://img.shields.io/badge/live-GitHub%20Pages-3b5c45?logo=github)](https://deepak17kb.github.io/Echo-Voice-Studio/)
+![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)
+![No dependencies](https://img.shields.io/badge/dependencies-none-6b8f71)
+
+</div>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/home-dark.webp">
+  <img src="docs/screenshots/home-light.webp" alt="Echo Studio's home screen: a greeting, a live clock, shortcuts to the AI Assistant and Voice to Note, stats, upcoming tasks and recent notes" width="100%">
+</picture>
+
+## Highlights
+
+- **An assistant that files for you.** Say a thought and Echo suggests the note it belongs in, shows why, or offers to start a new one.
+- **Dictation that cleans itself up.** Speak freely; punctuation, spelling and run-on sentences are fixed when you stop, with a word-level view of every change.
+- **Reminders from plain speech.** "Remind me to call mom at 6 pm" becomes a task with a notification, chime and snooze.
+- **Private by design.** Accounts, notes and tasks stay on your computer, or in your browser on the live site.
+- **No setup.** Python's standard library only: no `pip install`, Node.js or API key. Claude is optional.
+
+<table>
+  <tr>
+    <td width="50%">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/assistant-dark.webp">
+        <img src="docs/screenshots/assistant-light.webp" alt="The AI Assistant recommending the Lisbon trip note for a new thought, with a 73% match, the shared words, and a detected to-do">
+      </picture>
+    </td>
+    <td width="50%">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="docs/screenshots/notes-dark.webp">
+        <img src="docs/screenshots/notes-light.webp" alt="The notes library with topic filters, sorting, search and note cards">
+      </picture>
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><b>AI Assistant:</b> finds the right note and spots to-dos</td>
+    <td align="center"><b>Notes:</b> topics, search, pinning and export</td>
+  </tr>
+</table>
+
+## Try It Live
+
+Open **[deepak17kb.github.io/Echo-Voice-Studio](https://deepak17kb.github.io/Echo-Voice-Studio/)** and choose **Create account**. There's nothing to install.
+
+- **First visit:** your browser downloads Echo's Python engine (about 6 MB), which can take 10 seconds or so. After that it's cached and the studio opens in a few seconds.
+- **Your data stays in that browser.** Everything you create is saved on that device only. It isn't uploaded anywhere and doesn't sync between devices or browsers. Clearing the site's data deletes it, so use **Export** on the Notes page to keep a copy.
+- **One tab at a time.** A second tab waits until you close the first, so the two never overwrite each other's changes.
+- **Voice input** works best in Chrome or Edge. Everything else works in any modern browser.
+- **Local engine only.** The live site never uses Claude: that needs an API key, and keys don't belong in a public web page.
+
+## Run It on Your Computer
+
+On Windows, double-click **`run.bat`**. It starts the local server and opens the studio in your browser. Keep its window open while you use Echo; press **Ctrl+C** there to stop.
 
 Or, from this folder:
 
@@ -12,7 +72,7 @@ Or, from this folder:
 python app.py
 ```
 
-Then open [http://127.0.0.1:8000](http://127.0.0.1:8000). Python 3.10 or newer is required. No `pip install`, Node.js, or API key is needed.
+Then open [http://127.0.0.1:8000](http://127.0.0.1:8000). On macOS or Linux, run `python3 app.py`. Python 3.10 or newer is required. No `pip install`, Node.js, or API key is needed.
 
 The first time, choose **Create account**. Your new studio starts with a few example notes and tasks so there's something to explore.
 
@@ -64,7 +124,7 @@ By default everything runs on **Echo's local engine**, in `brain.py`. It is rule
 - Due-date parsing handles "tomorrow at 5 pm", "in 20 minutes", "on Friday" and similar phrases.
 - Assistant intents are recognized from patterns.
 
-**Optional: use Claude.** Install the official SDK and set an API key before starting Echo:
+**Optional: use Claude** (local app only). Install the official SDK and set an API key before starting Echo:
 
 ```powershell
 pip install anthropic
@@ -73,6 +133,47 @@ python app.py
 ```
 
 With a key present, grammar polish and open-ended questions (anything the local engine can't answer, like "what's the capital of France?") go to Claude (`claude-opus-5-5`). Note matching, reminders and everything else stay local. If a Claude request fails for any reason, Echo quietly falls back to the local engine. The badge in the top bar shows which engine is active. Set `ECHO_AI=local` to never use Claude, or `ECHO_AI=claude` to try it with credentials from `ant auth login`.
+
+## How the Live Version Works
+
+GitHub Pages can only host static files, and Echo's server is written in Python. So the live site runs that same Python code inside your browser, using [Pyodide](https://pyodide.org) (Python compiled to WebAssembly):
+
+```mermaid
+flowchart TB
+    subgraph Local["On your computer: python app.py"]
+        direction LR
+        A["Echo in your browser"] -- "/api requests over HTTP" --> B["app.py server"]
+        B --> C[("SQLite file in data/")]
+    end
+    subgraph Live["On GitHub Pages"]
+        direction LR
+        D["Echo in your browser"] -- "/api requests as messages" --> E["Web Worker running the same app.py in Pyodide"]
+        E --> F[("SQLite file in your browser's IndexedDB")]
+    end
+    Local ~~~ Live
+```
+
+- `tools/build_static.py` copies the web app and Echo's Python files into a static site.
+- In the browser, `web/js/engine-worker.js` starts Pyodide in a Web Worker so the page stays smooth, and `browser_bridge.py` hands each `/api` request to the same request handler the local server uses.
+- The database is an ordinary SQLite file, saved in your browser's IndexedDB after every change.
+- `.github/workflows/pages.yml` runs the tests on every push and pull request. When `main` changes and the tests pass, it builds the site and publishes it.
+
+The local app never loads any of this, so `python app.py` works exactly as before.
+
+## Deploy Your Own Copy
+
+1. Fork this repository.
+2. In your fork, open **Settings → Pages** and set **Source** to **GitHub Actions**. If the **Actions** tab asks, enable workflows.
+3. Push a commit to `main`, or run **Test and deploy** from the **Actions** tab. Your copy goes live at `https://<your-username>.github.io/<repository-name>/`.
+
+To preview the static site on your computer first:
+
+```powershell
+python tools/build_static.py site
+python -m http.server 8080 --directory site
+```
+
+Then open [http://127.0.0.1:8080](http://127.0.0.1:8080).
 
 ## Privacy and Security
 
@@ -83,6 +184,13 @@ With a key present, grammar polish and open-ended questions (anything the local 
 - **Microphone transcription uses your browser's speech service**, which may send audio over the internet depending on the browser. Nothing is saved until you save it.
 - **If you enable Claude**, the text you ask it to polish is sent to Anthropic's API. So are your open-ended questions, with the last few chat messages and a short summary of your workspace: your first name, the time, note titles and open tasks.
 - Otherwise Echo makes no external calls. The optional Google Fonts are loaded by your browser.
+
+**On the live site**, a few things differ:
+
+- Your studio is stored in that browser's IndexedDB. GitHub only serves the app's files and never sees what you type.
+- Your browser downloads the Python engine from the jsDelivr CDN, as well as the Google Fonts.
+- Passwords are hashed with 100,000 PBKDF2 iterations instead of 240,000, because the hashing runs in pure Python in the browser.
+- Signing in protects your studio inside the app, but the data sits unencrypted in the browser's storage, like any website's. Avoid keeping anything sensitive there on a shared computer.
 
 Voice input works best in current Microsoft Edge or Google Chrome. Typing works everywhere. Notifications appear when you allow them; otherwise reminders show inside Echo while it's open.
 
@@ -111,14 +219,15 @@ The suite covers:
 - Password hashing, sessions and sign-in history.
 - Migration of the original single-user database.
 - Privacy between accounts, and the full HTTP API: sign-up, sign-in, rate limiting, notes, tasks, assistant commands and security headers.
+- The in-browser bridge behind the live site, and the pure-Python password hashing it relies on.
 - The optional Claude path, with a mocked client.
 - Consistency between the HTML and the JavaScript that drives it.
 
-Test data is temporary and never touches your saved notes.
+Test data is temporary and never touches your saved notes. GitHub Actions runs the suite on every push and pull request, and the live site only updates when it passes.
 
 ## Storage and Configuration
 
-- Delete `data/voice_assistant.sqlite3` to remove all accounts, notes and tasks permanently.
+- Delete `data/voice_assistant.sqlite3` to remove all accounts, notes and tasks permanently. On the live site, clear the site's data in your browser instead.
 - Notes saved by an earlier version of Echo, before accounts existed, belong to the first account you create.
 - `PORT` changes the port (default `8000`); `VOICE_ASSISTANT_DB` changes the database path.
 - `ECHO_OPEN_BROWSER=1` opens the browser automatically; `run.bat` sets it.
@@ -128,30 +237,36 @@ Test data is temporary and never touches your saved notes.
 ## Project Layout
 
 ```text
-app.py              HTTP server: routing, accounts, sessions, JSON API, static files
-store.py            SQLite storage: users, sessions, sign-in history, notes, tasks
-brain.py            Local language engine: polish, matching, to-dos, due dates, assistant
-claude_engine.py    Optional Claude polish and chat, with local fallback
-web/index.html      Sign-in screen, studio shell, all views and dialogs
-web/styles.css      Design system: tokens, light and dark themes, motion, responsive layout
-web/js/main.js      Boot, sign-in flow, navigation, theme, keyboard shortcuts
-web/js/auth.js      Sign in and create-account screen
-web/js/home.js      Dashboard: clock, stats, streak, heatmap, topics, tips
-web/js/assistant.js AI assistant: voice orb, chat, and where-to-save suggestions
-web/js/dictate.js   Voice to Note: dictation, voice commands, polish, saving
-web/js/notes.js     Notes library and note dialog
-web/js/tasks.js     Tasks view and natural-language task entry
-web/js/notify.js    Reminder scheduling, notifications, chime, and the bell inbox
-web/js/account.js   Profile, preferences, and sign-in history
-web/js/palette.js   Ctrl+K command palette
-web/js/voice.js     Speech recognition, microphone levels, and spoken replies
-web/js/ui.js        Shared DOM, formatting, dialog, and animation helpers
-web/js/state.js     Shared state and preferences
-web/js/api.js       JSON requests to the local server
-web/js/router.js    Hash-based navigation
-web/js/theme.js     Applies the saved theme before first paint
-test_app.py         Dependency-free unit and integration tests
-run.bat             Windows double-click startup
+app.py                       HTTP server: routing, accounts, sessions, JSON API, static files
+store.py                     SQLite storage: users, sessions, sign-in history, notes, tasks
+brain.py                     Local language engine: polish, matching, to-dos, due dates, assistant
+claude_engine.py             Optional Claude polish and chat, with local fallback
+browser_bridge.py            Live site: runs the same request handler inside the browser
+web/index.html               Sign-in screen, studio shell, all views and dialogs
+web/styles.css               Design system: tokens, light and dark themes, motion, responsive layout
+web/js/main.js               Boot, sign-in flow, navigation, theme, keyboard shortcuts
+web/js/auth.js               Sign in and create-account screen
+web/js/home.js               Dashboard: clock, stats, streak, heatmap, topics, tips
+web/js/assistant.js          AI assistant: voice orb, chat, and where-to-save suggestions
+web/js/dictate.js            Voice to Note: dictation, voice commands, polish, saving
+web/js/notes.js              Notes library and note dialog
+web/js/tasks.js              Tasks view and natural-language task entry
+web/js/notify.js             Reminder scheduling, notifications, chime, and the bell inbox
+web/js/account.js            Profile, preferences, and sign-in history
+web/js/palette.js            Ctrl+K command palette
+web/js/voice.js              Speech recognition, microphone levels, and spoken replies
+web/js/ui.js                 Shared DOM, formatting, dialog, and animation helpers
+web/js/state.js              Shared state and preferences
+web/js/api.js                JSON requests to the local server or the in-browser engine
+web/js/router.js             Hash-based navigation
+web/js/theme.js              Applies the saved theme before first paint
+web/js/browser-backend.js    Live site: sends API requests to the in-browser engine
+web/js/engine-worker.js      Live site: Web Worker running Python (Pyodide), saving to IndexedDB
+tools/build_static.py        Builds the static site for GitHub Pages
+.github/workflows/pages.yml  Tests every push; deploys main to GitHub Pages
+docs/screenshots/            Images used in this README
+test_app.py                  Dependency-free unit and integration tests
+run.bat                      Windows double-click startup
 ```
 
 ## Roadmap
@@ -163,6 +278,7 @@ This project began as a small `pyttsx3` script that greeted you and told the tim
 - [x] AI-based conversation (built in, with optional Claude for open questions)
 - [x] Alarms, reminders and task automation, complete with notifications
 - [x] Remind the developer to stop debugging at 3:00 a.m. (try “remind me to go to sleep at 3 am”)
+- [x] Run it from a link, with nothing to install
 - [ ] Weather updates
 - [ ] Music playback
 
