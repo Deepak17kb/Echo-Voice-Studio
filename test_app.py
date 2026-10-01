@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import http.cookiejar
 import itertools
 import json
@@ -25,7 +26,7 @@ import brain
 import claude_engine
 from app import AssistantHandler
 from brain import calculate, respond
-from store import DuplicateEmailError, EchoStore, verify_password
+from store import DuplicateEmailError, EchoStore, hash_password, pbkdf2_sha256, verify_password
 
 FIXED_NOW = datetime(2026, 9, 30, 15, 42)  # a Wednesday afternoon
 WEB = Path(__file__).parent / "web"
@@ -211,6 +212,15 @@ class StoreTests(unittest.TestCase):
         self.assertEqual(store.user_for_session(token)["id"], user["id"])
         store.delete_session(token)
         self.assertIsNone(store.user_for_session(token))
+
+    def test_password_hashing_works_without_openssl(self) -> None:
+        # The browser build's Python has no OpenSSL, so hashing falls back to pure Python.
+        cases = [(b"correct horse", b"salt-1234567890ab", 1000), (b"x" * 100, bytes(16), 50), ("pässwörd".encode(), b"nacl", 1)]
+        expected = [hashlib.pbkdf2_hmac("sha256", *case) for case in cases]
+        with mock.patch("store.hashlib", SimpleNamespace(sha256=hashlib.sha256)):
+            self.assertEqual([pbkdf2_sha256(*case) for case in cases], expected)
+            stored = hash_password("correct horse", iterations=1000)
+        self.assertTrue(verify_password("correct horse", stored))
 
     def test_original_notes_database_is_migrated_to_the_first_account(self) -> None:
         self.path.parent.mkdir(parents=True)
@@ -495,6 +505,34 @@ class HttpTests(unittest.TestCase):
         status, body, _ = self.request("GET", "/api/health", headers={"Host": "evil.example"})
         self.assertEqual(status, 421)
         self.assertEqual(self.request("PATCH", "/api/notes/1", {"text": "x"})[0], 405)
+
+
+class BrowserBridgeTests(unittest.TestCase):
+    """The GitHub Pages build runs the same handler in the browser through browser_bridge."""
+
+    @staticmethod
+    def call(method: str, path: str, headers: dict, body: str = "") -> tuple[str, dict]:
+        import browser_bridge
+
+        head, _, payload = browser_bridge.handle(method, path, json.dumps(headers), body).partition("\r\n\r\n")
+        return head, json.loads(payload)
+
+    def test_the_api_answers_without_a_socket(self) -> None:
+        with mock.patch.dict(os.environ), mock.patch.object(AssistantHandler, "store", None, create=True), \
+                tempfile.TemporaryDirectory() as directory:
+            import browser_bridge
+
+            browser_bridge.start(str(Path(directory) / "browser.sqlite3"))
+            account = {"name": "Asha Rao", "email": "asha@example.com", "password": "correct horse"}
+            headers = {"Host": "127.0.0.1", "Content-Type": "application/json"}
+            head, body = self.call("POST", "/api/auth/register", headers, json.dumps(account))
+            self.assertEqual(head.split(" ")[1], "201", head)
+            self.assertEqual(body["user"]["email"], "asha@example.com")
+
+            token = re.search(r"Set-Cookie: echo_session=([^;]+)", head).group(1)
+            head, body = self.call("GET", "/api/auth/me", {"Host": "127.0.0.1", "Cookie": f"echo_session={token}"})
+            self.assertEqual(head.split(" ")[1], "200", head)
+            self.assertEqual(body["user"]["name"], "Asha Rao")
 
 
 class FrontendConsistencyTests(unittest.TestCase):

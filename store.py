@@ -5,6 +5,7 @@ from __future__ import annotations
 import functools
 import hashlib
 import hmac
+import os
 import secrets
 import sqlite3
 from contextlib import contextmanager
@@ -12,7 +13,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Iterable, Iterator, Mapping
 
-PBKDF2_ITERATIONS = 240_000
+# The in-browser build sets a lower count: its hashing runs in pure Python on WebAssembly.
+PBKDF2_ITERATIONS = int(os.environ.get("ECHO_PBKDF2_ITERATIONS", "240000"))
 SESSION_HOURS = 12
 REMEMBER_DAYS = 30
 EVENT_TYPES = ("register", "login", "logout", "failed")
@@ -119,9 +121,35 @@ def iso(moment: datetime) -> str:
     return moment.isoformat(timespec="seconds")
 
 
+def pbkdf2_sha256(password: bytes, salt: bytes, iterations: int) -> bytes:
+    """PBKDF2-HMAC-SHA256 with a 32-byte key, even where OpenSSL is unavailable."""
+    if hasattr(hashlib, "pbkdf2_hmac"):
+        return hashlib.pbkdf2_hmac("sha256", password, salt, iterations)
+    # Pure-Python fallback (the browser build's Python has no OpenSSL). Keyed HMAC states
+    # are prepared once and copied per round, the classic way to keep this fast.
+    key = hashlib.sha256(password).digest() if len(password) > 64 else password
+    key = key.ljust(64, b"\0")
+    inner = hashlib.sha256(bytes(byte ^ 0x36 for byte in key))
+    outer = hashlib.sha256(bytes(byte ^ 0x5C for byte in key))
+
+    def prf(message: bytes) -> bytes:
+        inner_round = inner.copy()
+        inner_round.update(message)
+        outer_round = outer.copy()
+        outer_round.update(inner_round.digest())
+        return outer_round.digest()
+
+    block = prf(salt + b"\x00\x00\x00\x01")
+    result = int.from_bytes(block, "big")
+    for _ in range(iterations - 1):
+        block = prf(block)
+        result ^= int.from_bytes(block, "big")
+    return result.to_bytes(32, "big")
+
+
 def hash_password(password: str, *, iterations: int = PBKDF2_ITERATIONS) -> str:
     salt = secrets.token_bytes(16)
-    digest = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, iterations)
+    digest = pbkdf2_sha256(password.encode("utf-8"), salt, iterations)
     return f"pbkdf2_sha256${iterations}${salt.hex()}${digest.hex()}"
 
 
@@ -130,9 +158,7 @@ def verify_password(password: str, stored: str) -> bool:
         algorithm, iterations, salt_hex, digest_hex = stored.split("$")
         if algorithm != "pbkdf2_sha256":
             return False
-        digest = hashlib.pbkdf2_hmac(
-            "sha256", password.encode("utf-8"), bytes.fromhex(salt_hex), int(iterations)
-        )
+        digest = pbkdf2_sha256(password.encode("utf-8"), bytes.fromhex(salt_hex), int(iterations))
     except (ValueError, TypeError):
         return False
     return hmac.compare_digest(digest.hex(), digest_hex)

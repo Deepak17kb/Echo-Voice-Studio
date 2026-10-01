@@ -165,7 +165,11 @@ export async function snoozeTask(id, minutes) {
 function systemNotification(title, body, onClick) {
   if (permission() !== "granted") return;
   try {
-    const notification = new Notification(title, { body, icon: "/icon.svg", tag: `echo-${title}-${body}` });
+    const notification = new Notification(title, {
+      body,
+      icon: new URL("icon.svg", document.baseURI).href,
+      tag: `echo-${title}-${body}`,
+    });
     notification.onclick = () => {
       window.focus();
       onClick?.();
